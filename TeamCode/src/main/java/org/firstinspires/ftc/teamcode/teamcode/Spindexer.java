@@ -89,4 +89,11 @@ public class Spindexer {
         }
         return false;
     }
+    public void setDrumState(Mode mode) {
+        if (mode == Mode.INTAKE) {
+            drumServo.setPosition(intakePos[drumPocket]);
+        } else if (mode == Mode.OUTTAKE) {
+            drumServo.setPosition(outtakePos[drumPocket]);
+        }
+    }
 }
