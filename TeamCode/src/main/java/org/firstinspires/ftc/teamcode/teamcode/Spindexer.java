@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
@@ -18,6 +19,8 @@ public class Spindexer {
     NormalizedColorSensor intakeColorSensor;
     ServoImplEx drumServo;
     Servo flickServo;
+//    ElapsedTime timer = new ElapsedTime(10000);
+//    double cooldown = 10;
     public BallState[] ballStates = {BallState.EMPTY, BallState.EMPTY, BallState.EMPTY};
     //color of ball in each pocket
     public enum BallState {
@@ -34,12 +37,13 @@ public class Spindexer {
 
         flickServo = hardwareMap.get(Servo.class, "flick");
         flickServo.setPosition(0);
-
+        //create color sensor and set gain (multiply values to eliminate variation
         intakeColorSensor = hardwareMap.get(NormalizedColorSensor.class, "intakeColorSensor");
         intakeColorSensor.setGain(15);
 
     }
     public void colorSensor(){
+        //color sensor stuff
         NormalizedRGBA colors = intakeColorSensor.getNormalizedColors();
         final float[] hsvValues = new float[3];
         Color.colorToHSV(colors.toColor(), hsvValues);
@@ -49,6 +53,7 @@ public class Spindexer {
         } else {
             lastBallColor = "purple";
         }
+        //if you detect ball, remember ball color
         if (detectBallIntake()){
             if (lastBallColor.equals("green")){
                 ballStates[drumPocket] = BallState.GREEN;
@@ -65,12 +70,17 @@ public class Spindexer {
         }
         return false;
     }
+    //set drum to next pocket, limit at 2
     public void setDrumNextIntake(){
         drumPocket = drumPocket + 1;
         if (drumPocket > 2){
             drumPocket = 2;
         }
     }
+    public void resetDrum(){
+        drumPocket = 0;
+    }
+    //for outtake, set to whichever color ball you want
     public void setDrumStateToBall(BallState ballState){
         if (ballState == BallState.PURPLE) {
             drumPocket = Arrays.asList(ballState).indexOf(BallState.PURPLE);
@@ -84,6 +94,7 @@ public class Spindexer {
     }
 
     public boolean drumIsFull(){
+        //if none of the drumpockets are empty, return true
         if (ballStates[0] != BallState.EMPTY && ballStates[1] != BallState.EMPTY && ballStates[2] != BallState.EMPTY){
             return true;
         }

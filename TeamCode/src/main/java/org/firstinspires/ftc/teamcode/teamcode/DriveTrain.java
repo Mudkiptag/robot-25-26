@@ -23,6 +23,7 @@ public class DriveTrain {
         blMotor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
     public void SetDriveTrainPower(double xPower, double yPower, double rPower){
+        //magic strafing code
         double flPower = yPower + xPower + rPower;
         double frPower = yPower - xPower - rPower;
         double blPower = yPower - xPower + rPower;

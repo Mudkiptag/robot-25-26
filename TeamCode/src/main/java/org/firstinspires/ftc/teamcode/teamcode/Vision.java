@@ -35,7 +35,7 @@ public class Vision {
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
         if (USE_WEBCAM) {
-            builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+            builder.setCamera(hardwareMap.get(WebcamName.class, "camera"));
         } else {
             builder.setCamera(BuiltinCameraDirection.BACK);
         }
