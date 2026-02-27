@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
+import java.util.Arrays;
 import java.util.List;
 
 @TeleOp
@@ -33,6 +34,7 @@ public class MainTeleOp extends LinearOpMode {
         while (opModeIsActive()){
             //print telemetry
             vision.telemetryAprilTag(telemetry);
+            telemetry();
             //set power of drive train
             driveTrain.SetDriveTrainPower(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
             //set stuff so its always on
@@ -61,6 +63,12 @@ public class MainTeleOp extends LinearOpMode {
             }
         }
     }
-
-
+    public void telemetry(){
+        telemetry.addLine("Drum States: " + Arrays.toString(spindexer.ballStates));
+        telemetry.addLine("Drum Position: " + spindexer.drumServo.getPosition());
+        telemetry.addLine("Current Velocity: " + outtake.currentVelocity);
+        telemetry.addLine("Target Velocity: " + outtake.targetVelocity);
+        telemetry.addLine("Motif Detected: " + vision.motif);
+        telemetry.update();
+    }
 }
