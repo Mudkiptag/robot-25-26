@@ -4,13 +4,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 public class DriveTrain {
-    private DcMotor flMotor;
-    private DcMotor blMotor;
-    private DcMotor brMotor;
-    private DcMotor frMotor;
+    private final DcMotor flMotor;
+    private final DcMotor blMotor;
+    private final DcMotor brMotor;
+    private final DcMotor frMotor;
     public DriveTrain(HardwareMap hardwareMap) {
         flMotor = hardwareMap.get(DcMotor.class, "fl");
         blMotor = hardwareMap.get(DcMotor.class, "bl");

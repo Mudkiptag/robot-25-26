@@ -1,16 +1,10 @@
 package org.firstinspires.ftc.teamcode.teamcode;
 
-import android.graphics.Color;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Intake {
     DcMotor intake;
@@ -19,7 +13,7 @@ public class Intake {
     public enum IntakeState {
         ON,
         OFF,
-        REVERSE;
+        REVERSE
     }
     public Intake(HardwareMap hardwareMap){
         intake = hardwareMap.get(DcMotor.class, "intake");
@@ -39,15 +33,29 @@ public class Intake {
     public void setIntakeState(Gamepad gamepad2, Telemetry telemetry) {
         switch (intakeState) {
             case OFF:
-                if (gamepad2.xWasPressed()) {
+                if (gamepad2.dpadRightWasPressed()) {
                     intakeState = IntakeState.ON;
                 }
             case ON:
-                if (gamepad2.xWasPressed()) {
+                if (gamepad2.dpadRightWasPressed()) {
+                    intakeState = IntakeState.OFF;
+                }
+            case REVERSE:
+                if (gamepad2.dpadRightWasPressed()) {
+                    intakeState = IntakeState.OFF;
+                }
+        }
+        switch (intakeState) {
+            case OFF:
+                if (gamepad2.dpadLeftWasPressed()) {
+                    intakeState = IntakeState.REVERSE;
+                }
+            case ON:
+                if (gamepad2.dpadLeftWasPressed()) {
                     intakeState = IntakeState.REVERSE;
                 }
             case REVERSE:
-                if (gamepad2.xWasPressed()) {
+                if (gamepad2.dpadLeftWasPressed()) {
                     intakeState = IntakeState.OFF;
                 }
         }
