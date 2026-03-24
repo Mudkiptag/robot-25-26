@@ -32,7 +32,6 @@ public class MainTeleOp extends LinearOpMode {
             driveTrain.SetDriveTrainPower(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
             //set stuff so its always on
             outtake.setContinuousFunctions(gamepad2, pidfController, spindexer.mode, spindexer, vision);
-            outtake.isItTimeToFlick();
             pidfController.changeKs(gamepad2, gamepad1);
             pidfController.PIDFMath(outtake.targetVelocity, outtake.currentVelocity);
             vision.aprilTagDetection();
