@@ -8,6 +8,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import java.util.Iterator;
+import java.util.PriorityQueue;
+import java.util.Queue;
+
 public class Outtake {
     public DcMotorEx outtakeMotor1;
     public DcMotorEx outtakeMotor2;
@@ -35,8 +39,11 @@ public class Outtake {
         timeToFlick = false;
         ballWasShotRecently = false;
         hoodServo = hardwareMap.get(Servo.class, "hoodServo");
+
     }
     public void setContinuousFunctions(Gamepad gamepad2, PIDFController pidfController, Mode mode, Spindexer spindexer, Vision vision){
+        Queue<Spindexer.BallState> shootQueue = new PriorityQueue<>();
+        Iterator<Spindexer.BallState> iterator = shootQueue.iterator();
         if (gamepad2.right_bumper){
             targetVelocity = targetVelocity + 10;
         } else if (gamepad2.left_bumper){
@@ -44,18 +51,11 @@ public class Outtake {
         }
         if (mode == Mode.OUTTAKE) {
             setOuttakePower(pidfController.PIDFMath(targetVelocity, currentVelocity));
-            if (timeToShoot && !ballWasShotRecently){
-                shootNextBall(vision.motif, spindexer);
-            }
-            if (spindexer.flickTimer.seconds() > spindexer.flickCooldown && spindexer.flickTimer.seconds() < 2){
-                outtakeTimer.reset();
-                timeToShoot = false;
-            }
             if (timeToFlick){
                 spindexer.flickBall();
             }
         }
-        if (drumIsSwitching.seconds() > 0.5 && drumIsSwitching.seconds() < 0.6){
+        if (drumIsSwitching.seconds() > 0.6 && drumIsSwitching.seconds() < 0.65){
             if (!timeToFlick) {
                 timeToFlick = true;
             }
@@ -67,6 +67,18 @@ public class Outtake {
             ballWasShotRecently = true;
         } else if (spindexer.flickTimer.seconds() > 0.4){
             ballWasShotRecently = false;
+        }
+
+        if (gamepad2.aWasPressed()) {
+            setQueue(vision.motif, shootQueue);
+        }
+        while (iterator.hasNext()){
+            shootQueue.remove();
+        }
+        if (iterator.next() == Spindexer.BallState.PURPLE){
+            shootPurple(spindexer);
+        } else if (iterator.next() == Spindexer.BallState.GREEN){
+            shootGreen(spindexer);
         }
     }
     //find current velocity for PIDF
@@ -117,39 +129,52 @@ public class Outtake {
         }
     }
     //shoot balls in order based on motif
-    public void shootNextBall(String motif, Spindexer spindexer){
+    public void setQueue(String motif, Queue<Spindexer.BallState> shootQueue){
         switch (motif) {
             case "PPG":
-                if (lastBallShot == Spindexer.BallState.EMPTY) {
-                    shootPurple(spindexer);
-                } else if (lastBallShot == Spindexer.BallState.PURPLE){
-                    shootPurple(spindexer);
-                }
+                shootQueue.add(Spindexer.BallState.PURPLE);
+                shootQueue.add(Spindexer.BallState.PURPLE);
+                shootQueue.add(Spindexer.BallState.GREEN);
+//                if (lastBallShot == Spindexer.BallState.EMPTY) {
+//                    shootPurple(spindexer);
+//                } else if (lastBallShot == Spindexer.BallState.PURPLE){
+//                    shootPurple(spindexer);
+//                }
                 break;
             case "PGP":
-                if (lastBallShot == Spindexer.BallState.EMPTY) {
-                    shootPurple(spindexer);
-                } else if (lastBallShot == Spindexer.BallState.PURPLE){
-                    shootGreen(spindexer);
-                } else if (lastBallShot == Spindexer.BallState.GREEN){
-                    shootPurple(spindexer);
-                }
+                shootQueue.add(Spindexer.BallState.PURPLE);
+                shootQueue.add(Spindexer.BallState.GREEN);
+                shootQueue.add(Spindexer.BallState.PURPLE);
+//                if (lastBallShot == Spindexer.BallState.EMPTY) {
+//                    shootPurple(spindexer);
+//                } else if (lastBallShot == Spindexer.BallState.PURPLE){
+//                    shootGreen(spindexer);
+//                } else if (lastBallShot == Spindexer.BallState.GREEN){
+//                    shootPurple(spindexer);
+//                }
                 break;
             case "GPP":
-                if (lastBallShot == Spindexer.BallState.EMPTY) {
-                    shootGreen(spindexer);
-                } else if (lastBallShot == Spindexer.BallState.PURPLE){
-                    shootPurple(spindexer);
-                } else if (lastBallShot == Spindexer.BallState.GREEN){
-                    shootPurple(spindexer);
-                }
+                shootQueue.add(Spindexer.BallState.GREEN);
+                shootQueue.add(Spindexer.BallState.PURPLE);
+                shootQueue.add(Spindexer.BallState.PURPLE);
+
+//                if (lastBallShot == Spindexer.BallState.EMPTY) {
+//                    shootGreen(spindexer);
+//                } else if (lastBallShot == Spindexer.BallState.PURPLE){
+//                    shootPurple(spindexer);
+//                } else if (lastBallShot == Spindexer.BallState.GREEN){
+//                    shootPurple(spindexer);
+//                }
                 break;
             default:
-                if (lastBallShot == Spindexer.BallState.EMPTY) {
-                    shootPurple(spindexer);
-                } else if (lastBallShot == Spindexer.BallState.PURPLE){
-                    shootPurple(spindexer);
-                }
+                shootQueue.add(Spindexer.BallState.PURPLE);
+                shootQueue.add(Spindexer.BallState.PURPLE);
+                shootQueue.add(Spindexer.BallState.GREEN);
+//                if (lastBallShot == Spindexer.BallState.EMPTY) {
+//                    shootPurple(spindexer);
+//                } else if (lastBallShot == Spindexer.BallState.PURPLE){
+//                    shootPurple(spindexer);
+//                }
                 break;
         }
     }

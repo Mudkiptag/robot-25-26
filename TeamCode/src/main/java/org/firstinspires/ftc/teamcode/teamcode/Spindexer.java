@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.Arrays;
+import java.util.Queue;
 
 public class Spindexer {
     NormalizedColorSensor intakeColorSensor;
@@ -49,7 +50,7 @@ public class Spindexer {
         intakeColorSensor.setGain(15);
 
     }
-    public void setContinuousFunctions(Gamepad gamepad2, Outtake outtake){
+    public void setContinuousFunctions(Gamepad gamepad2, Outtake outtake, Vision vision){
         //set flick position
         if (flickTimer.seconds() > flickCooldown) {
             flickServo.setPosition(0.57);

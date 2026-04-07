@@ -35,7 +35,7 @@ public class MainTeleOp extends LinearOpMode {
             pidfController.changeKs(gamepad2, gamepad1);
             pidfController.PIDFMath(outtake.targetVelocity, outtake.currentVelocity);
             vision.aprilTagDetection();
-            spindexer.setContinuousFunctions(gamepad2, outtake);
+            spindexer.setContinuousFunctions(gamepad2, outtake, vision);
             printTelemetry.printTelemetry(telemetry, spindexer, outtake, vision, pidfController);
             intake.setIntakeState(gamepad2, telemetry);
         }
