@@ -71,15 +71,18 @@ public class Outtake {
 
         if (gamepad2.aWasPressed()) {
             setQueue(vision.motif, shootQueue);
+            while (iterator.hasNext()){
+                if (shootQueue.size() == 3) {
+                    shootQueue.remove();
+                    if (iterator.next() == Spindexer.BallState.PURPLE) {
+                        shootPurple(spindexer);
+                    } else if (iterator.next() == Spindexer.BallState.GREEN) {
+                        shootGreen(spindexer);
+                    }
+                }
+            }
         }
-        while (iterator.hasNext()){
-            shootQueue.remove();
-        }
-        if (iterator.next() == Spindexer.BallState.PURPLE){
-            shootPurple(spindexer);
-        } else if (iterator.next() == Spindexer.BallState.GREEN){
-            shootGreen(spindexer);
-        }
+
     }
     //find current velocity for PIDF
     private double getCurrentVelocity(){
